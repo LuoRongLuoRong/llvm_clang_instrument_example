@@ -1,8 +1,0 @@
-/home/fdse/luorong/LLVM/test/llvm_clang_instrument_example/build/CMakeFiles/intrinsics_gen.dir
-/home/fdse/luorong/LLVM/test/llvm_clang_instrument_example/build/CMakeFiles/omp_gen.dir
-/home/fdse/luorong/LLVM/test/llvm_clang_instrument_example/build/CMakeFiles/acc_gen.dir
-/home/fdse/luorong/LLVM/test/llvm_clang_instrument_example/build/CMakeFiles/edit_cache.dir
-/home/fdse/luorong/LLVM/test/llvm_clang_instrument_example/build/CMakeFiles/rebuild_cache.dir
-/home/fdse/luorong/LLVM/test/llvm_clang_instrument_example/build/instrumentation/CMakeFiles/InstrumentPass.dir
-/home/fdse/luorong/LLVM/test/llvm_clang_instrument_example/build/instrumentation/CMakeFiles/edit_cache.dir
-/home/fdse/luorong/LLVM/test/llvm_clang_instrument_example/build/instrumentation/CMakeFiles/rebuild_cache.dir
