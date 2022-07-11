@@ -69,10 +69,10 @@ bool Skeleton::runImpl(Function &F)
 namespace
 {
     // 继承自 FunctionPass
-    struct SkeletonPass : public FunctionPass
+    struct InstrumentPass : public FunctionPass
     {
         static char ID;
-        SkeletonPass() : FunctionPass(ID) {}
+        InstrumentPass() : FunctionPass(ID) {}
 
         virtual bool runOnFunction(Function &F)
         {
@@ -91,12 +91,12 @@ namespace
 
 /********************************  pass 的注册  *******************************/
 // 注册 pass 并且自启动
-char SkeletonPass::ID = 0;
+char InstrumentPass::ID = 0;
 
 // Automatically enable the pass.
 // http://adriansampson.net/blog/clangpass.html
-static void registerSkeletonPass(const PassManagerBuilder &, legacy::PassManagerBase &PM)
+static void registerInstrumentPass(const PassManagerBuilder &, legacy::PassManagerBase &PM)
 {
-    PM.add(new SkeletonPass());
+    PM.add(new InstrumentPass());
 }
-static RegisterStandardPasses RegisterMyPass(PassManagerBuilder::EP_EarlyAsPossible, registerSkeletonPass);
+static RegisterStandardPasses RegisterMyPass(PassManagerBuilder::EP_EarlyAsPossible, registerInstrumentPass);
