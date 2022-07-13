@@ -21,6 +21,8 @@ class Skeleton : public PassInfoMixin<Skeleton>
 public:
     /* core function */
     bool runImpl(Function &F);
+
+    void logValue();
 };
 /* core function */
 
@@ -53,9 +55,32 @@ bool Skeleton::runImpl(Function &F)
                     // here we change from plus to multiply
                     user->setOperand(U.getOperandNo(), mul);
                 }
+            }
 
-                // We modified the code.
-                return true;
+            if (auto *op = dyn_cast<LoadInst>(&I)) {
+                // %0 = load i32, i32* %num, align 4, !dbg !862
+                IRBuilder<> builder(op);
+                builder.SetInsertPoint(&B, ++builder.GetInsertPoint());
+
+                Value *arg = op->getOperand(0); 
+                std::string var_name = arg->getName().str();
+
+                /* create a function in rtlib */
+                Value *args[] = {builder.CreateGlobalString(var_name), dyn_cast_or_null<Value>(op)};
+
+                // 函数参数：
+                std::vector<Type *> paramTypes = {
+                    Type::getInt8PtrTy(Ctx), // filename
+                    Type::getInt32Ty(Ctx),   // value
+                };
+                // 函数返回值：
+                Type *retType = Type::getVoidTy(Ctx);
+                // 函数类型：
+                FunctionType *logFuncType = FunctionType::get(retType, paramTypes, false);
+                // 根据函数的名字获取该函数：
+                FunctionCallee logFunc = F.getParent()->getOrInsertFunction("log_int", logFuncType);
+
+                builder.CreateCall(logFunc, args);
             }
         }
     }
@@ -90,7 +115,7 @@ namespace
 }
 
 /********************************  pass 的注册  *******************************/
-// 注册 pass 并且自启动
+// // 注册 pass 并且自启动
 char InstrumentPass::ID = 0;
 
 // Automatically enable the pass.
@@ -100,3 +125,16 @@ static void registerInstrumentPass(const PassManagerBuilder &, legacy::PassManag
     PM.add(new InstrumentPass());
 }
 static RegisterStandardPasses RegisterMyPass(PassManagerBuilder::EP_EarlyAsPossible, registerInstrumentPass);
+
+/********************************  new register for opt  *******************************/
+// cannot generate an executable file.
+
+// char InstrumentPass::ID = 0;
+// static RegisterPass<InstrumentPass> X("instrument", "Instrument Pass",
+//                              false /* Only looks at CFG */,
+//                              false /* Analysis Pass */);
+
+// static RegisterStandardPasses Y(
+//     PassManagerBuilder::EP_EarlyAsPossible,
+//     [](const PassManagerBuilder &Builder,
+//        legacy::PassManagerBase &PM) { PM.add(new InstrumentPass()); });
