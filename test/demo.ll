@@ -4,7 +4,7 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-unknown-linux-gnu"
 
 %"class.std::ios_base::Init" = type { i8 }
-%"class.std::basic_istream" = type { i32 (...)**, i64, %"class.std::basic_ios" }
+%"class.std::basic_ostream" = type { i32 (...)**, %"class.std::basic_ios" }
 %"class.std::basic_ios" = type { %"class.std::ios_base", %"class.std::basic_ostream"*, i8, i8, %"class.std::basic_streambuf"*, %"class.std::ctype"*, %"class.std::num_put"*, %"class.std::num_get"* }
 %"class.std::ios_base" = type { i32 (...)**, i64, i64, i32, i32, i32, %"struct.std::ios_base::_Callback_list"*, %"struct.std::ios_base::_Words", [8 x %"struct.std::ios_base::_Words"], i32, %"struct.std::ios_base::_Words"*, %"class.std::locale" }
 %"struct.std::ios_base::_Callback_list" = type { %"struct.std::ios_base::_Callback_list"*, void (i32, %"class.std::ios_base"*, i32)*, i32, i32 }
@@ -12,7 +12,6 @@ target triple = "x86_64-unknown-linux-gnu"
 %"class.std::locale" = type { %"class.std::locale::_Impl"* }
 %"class.std::locale::_Impl" = type { i32, %"class.std::locale::facet"**, i64, %"class.std::locale::facet"**, i8** }
 %"class.std::locale::facet" = type <{ i32 (...)**, i32, [4 x i8] }>
-%"class.std::basic_ostream" = type { i32 (...)**, %"class.std::basic_ios" }
 %"class.std::basic_streambuf" = type { i32 (...)**, i8*, i8*, i8*, i8*, i8*, i8*, %"class.std::locale" }
 %"class.std::ctype" = type <{ %"class.std::locale::facet.base", [4 x i8], %struct.__locale_struct*, i8, [7 x i8], i32*, i32*, i16*, i8, [256 x i8], [256 x i8], i8, [6 x i8] }>
 %"class.std::locale::facet.base" = type <{ i32 (...)**, i32 }>
@@ -20,11 +19,19 @@ target triple = "x86_64-unknown-linux-gnu"
 %struct.__locale_data = type opaque
 %"class.std::num_put" = type { %"class.std::locale::facet.base", [4 x i8] }
 %"class.std::num_get" = type { %"class.std::locale::facet.base", [4 x i8] }
+%"class.std::basic_istream" = type { i32 (...)**, i64, %"class.std::basic_ios" }
+%"class.std::__cxx11::basic_string" = type { %"struct.std::__cxx11::basic_string<char>::_Alloc_hider", i64, %union.anon }
+%"struct.std::__cxx11::basic_string<char>::_Alloc_hider" = type { i8* }
+%union.anon = type { i64, [8 x i8] }
+%"class.std::allocator" = type { i8 }
 
 @_ZStL8__ioinit = internal global %"class.std::ios_base::Init" zeroinitializer, align 1, !dbg !0
 @__dso_handle = external hidden global i8
-@_ZSt3cin = external dso_local global %"class.std::basic_istream", align 8
 @_ZSt4cout = external dso_local global %"class.std::basic_ostream", align 8
+@.str = private unnamed_addr constant [2 x i8] c" \00", align 1
+@_ZSt3cin = external dso_local global %"class.std::basic_istream", align 8
+@.str.1 = private unnamed_addr constant [15 x i8] c"larger than 10\00", align 1
+@.str.2 = private unnamed_addr constant [13 x i8] c"less than 10\00", align 1
 @llvm.global_ctors = appending global [1 x { i32, void ()*, i8* }] [{ i32, void ()*, i8* } { i32 65535, void ()* @_GLOBAL__sub_I_demo.cpp, i8* null }]
 
 ; Function Attrs: noinline uwtable
@@ -43,25 +50,27 @@ declare dso_local void @_ZNSt8ios_base4InitD1Ev(%"class.std::ios_base::Init"* no
 ; Function Attrs: nounwind
 declare dso_local i32 @__cxa_atexit(void (i8*)*, i8*, i8*) #3
 
-; Function Attrs: mustprogress noinline norecurse optnone uwtable
-define dso_local i32 @main() #4 !dbg !857 {
+; Function Attrs: mustprogress noinline optnone uwtable
+define dso_local void @_Z8my_printNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi(%"class.std::__cxx11::basic_string"* %info, i32 %value) #4 !dbg !857 {
 entry:
-  %retval = alloca i32, align 4
-  %num = alloca i32, align 4
-  store i32 0, i32* %retval, align 4
-  call void @llvm.dbg.declare(metadata i32* %num, metadata !858, metadata !DIExpression()), !dbg !859
-  %call = call nonnull align 8 dereferenceable(16) %"class.std::basic_istream"* @_ZNSirsERi(%"class.std::basic_istream"* nonnull align 8 dereferenceable(16) @_ZSt3cin, i32* nonnull align 4 dereferenceable(4) %num), !dbg !860
-  %0 = load i32, i32* %num, align 4, !dbg !861
-  %add = add nsw i32 %0, 10, !dbg !862
-  %call1 = call nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZNSolsEi(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8) @_ZSt4cout, i32 %add), !dbg !863
-  %call2 = call nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZNSolsEPFRSoS_E(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8) %call1, %"class.std::basic_ostream"* (%"class.std::basic_ostream"*)* @_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_), !dbg !864
-  ret i32 0, !dbg !865
+  %value.addr = alloca i32, align 4
+  call void @llvm.dbg.declare(metadata %"class.std::__cxx11::basic_string"* %info, metadata !865, metadata !DIExpression()), !dbg !866
+  store i32 %value, i32* %value.addr, align 4
+  call void @llvm.dbg.declare(metadata i32* %value.addr, metadata !867, metadata !DIExpression()), !dbg !868
+  %call = call nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZStlsIcSt11char_traitsIcESaIcEERSt13basic_ostreamIT_T0_ES7_RKNSt7__cxx1112basic_stringIS4_S5_T1_EE(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8) @_ZSt4cout, %"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32) %info), !dbg !869
+  %call1 = call nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8) %call, i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str, i64 0, i64 0)), !dbg !870
+  %0 = load i32, i32* %value.addr, align 4, !dbg !871
+  %call2 = call nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZNSolsEi(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8) %call1, i32 %0), !dbg !872
+  %call3 = call nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZNSolsEPFRSoS_E(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8) %call2, %"class.std::basic_ostream"* (%"class.std::basic_ostream"*)* @_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_), !dbg !873
+  ret void, !dbg !874
 }
 
 ; Function Attrs: nofree nosync nounwind readnone speculatable willreturn
 declare void @llvm.dbg.declare(metadata, metadata, metadata) #5
 
-declare dso_local nonnull align 8 dereferenceable(16) %"class.std::basic_istream"* @_ZNSirsERi(%"class.std::basic_istream"* nonnull align 8 dereferenceable(16), i32* nonnull align 4 dereferenceable(4)) #1
+declare dso_local nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8), i8*) #1
+
+declare dso_local nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZStlsIcSt11char_traitsIcESaIcEERSt13basic_ostreamIT_T0_ES7_RKNSt7__cxx1112basic_stringIS4_S5_T1_EE(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8), %"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32)) #1
 
 declare dso_local nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZNSolsEi(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8), i32) #1
 
@@ -69,10 +78,130 @@ declare dso_local nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"
 
 declare dso_local nonnull align 8 dereferenceable(8) %"class.std::basic_ostream"* @_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_(%"class.std::basic_ostream"* nonnull align 8 dereferenceable(8)) #1
 
-; Function Attrs: noinline uwtable
-define internal void @_GLOBAL__sub_I_demo.cpp() #0 section ".text.startup" !dbg !866 {
+; Function Attrs: mustprogress noinline norecurse optnone uwtable
+define dso_local i32 @main() #6 personality i8* bitcast (i32 (...)* @__gxx_personality_v0 to i8*) !dbg !875 {
 entry:
-  call void @__cxx_global_var_init(), !dbg !868
+  %retval = alloca i32, align 4
+  %num = alloca i32, align 4
+  %agg.tmp = alloca %"class.std::__cxx11::basic_string", align 8
+  %ref.tmp = alloca %"class.std::allocator", align 1
+  %exn.slot = alloca i8*, align 8
+  %ehselector.slot = alloca i32, align 4
+  %agg.tmp3 = alloca %"class.std::__cxx11::basic_string", align 8
+  %ref.tmp4 = alloca %"class.std::allocator", align 1
+  store i32 0, i32* %retval, align 4
+  call void @llvm.dbg.declare(metadata i32* %num, metadata !876, metadata !DIExpression()), !dbg !877
+  %call = call nonnull align 8 dereferenceable(16) %"class.std::basic_istream"* @_ZNSirsERi(%"class.std::basic_istream"* nonnull align 8 dereferenceable(16) @_ZSt3cin, i32* nonnull align 4 dereferenceable(4) %num), !dbg !878
+  %0 = load i32, i32* %num, align 4, !dbg !879
+  %cmp = icmp sge i32 %0, 10, !dbg !881
+  br i1 %cmp, label %if.then, label %if.else, !dbg !882
+
+if.then:                                          ; preds = %entry
+  call void @_ZNSaIcEC1Ev(%"class.std::allocator"* nonnull align 1 dereferenceable(1) %ref.tmp) #3, !dbg !883
+  invoke void @_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1EPKcRKS3_(%"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32) %agg.tmp, i8* getelementptr inbounds ([15 x i8], [15 x i8]* @.str.1, i64 0, i64 0), %"class.std::allocator"* nonnull align 1 dereferenceable(1) %ref.tmp)
+          to label %invoke.cont unwind label %lpad, !dbg !883
+
+invoke.cont:                                      ; preds = %if.then
+  %1 = load i32, i32* %num, align 4, !dbg !885
+  invoke void @_Z8my_printNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi(%"class.std::__cxx11::basic_string"* %agg.tmp, i32 %1)
+          to label %invoke.cont2 unwind label %lpad1, !dbg !886
+
+invoke.cont2:                                     ; preds = %invoke.cont
+  call void @_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev(%"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32) %agg.tmp) #3, !dbg !886
+  call void @_ZNSaIcED1Ev(%"class.std::allocator"* nonnull align 1 dereferenceable(1) %ref.tmp) #3, !dbg !886
+  br label %if.end, !dbg !887
+
+lpad:                                             ; preds = %if.then
+  %2 = landingpad { i8*, i32 }
+          cleanup, !dbg !888
+  %3 = extractvalue { i8*, i32 } %2, 0, !dbg !888
+  store i8* %3, i8** %exn.slot, align 8, !dbg !888
+  %4 = extractvalue { i8*, i32 } %2, 1, !dbg !888
+  store i32 %4, i32* %ehselector.slot, align 4, !dbg !888
+  br label %ehcleanup, !dbg !888
+
+lpad1:                                            ; preds = %invoke.cont
+  %5 = landingpad { i8*, i32 }
+          cleanup, !dbg !888
+  %6 = extractvalue { i8*, i32 } %5, 0, !dbg !888
+  store i8* %6, i8** %exn.slot, align 8, !dbg !888
+  %7 = extractvalue { i8*, i32 } %5, 1, !dbg !888
+  store i32 %7, i32* %ehselector.slot, align 4, !dbg !888
+  call void @_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev(%"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32) %agg.tmp) #3, !dbg !886
+  br label %ehcleanup, !dbg !886
+
+ehcleanup:                                        ; preds = %lpad1, %lpad
+  call void @_ZNSaIcED1Ev(%"class.std::allocator"* nonnull align 1 dereferenceable(1) %ref.tmp) #3, !dbg !886
+  br label %eh.resume, !dbg !886
+
+if.else:                                          ; preds = %entry
+  call void @_ZNSaIcEC1Ev(%"class.std::allocator"* nonnull align 1 dereferenceable(1) %ref.tmp4) #3, !dbg !889
+  invoke void @_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1EPKcRKS3_(%"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32) %agg.tmp3, i8* getelementptr inbounds ([13 x i8], [13 x i8]* @.str.2, i64 0, i64 0), %"class.std::allocator"* nonnull align 1 dereferenceable(1) %ref.tmp4)
+          to label %invoke.cont6 unwind label %lpad5, !dbg !889
+
+invoke.cont6:                                     ; preds = %if.else
+  %8 = load i32, i32* %num, align 4, !dbg !891
+  invoke void @_Z8my_printNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi(%"class.std::__cxx11::basic_string"* %agg.tmp3, i32 %8)
+          to label %invoke.cont8 unwind label %lpad7, !dbg !892
+
+invoke.cont8:                                     ; preds = %invoke.cont6
+  call void @_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev(%"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32) %agg.tmp3) #3, !dbg !892
+  call void @_ZNSaIcED1Ev(%"class.std::allocator"* nonnull align 1 dereferenceable(1) %ref.tmp4) #3, !dbg !892
+  br label %if.end
+
+lpad5:                                            ; preds = %if.else
+  %9 = landingpad { i8*, i32 }
+          cleanup, !dbg !893
+  %10 = extractvalue { i8*, i32 } %9, 0, !dbg !893
+  store i8* %10, i8** %exn.slot, align 8, !dbg !893
+  %11 = extractvalue { i8*, i32 } %9, 1, !dbg !893
+  store i32 %11, i32* %ehselector.slot, align 4, !dbg !893
+  br label %ehcleanup10, !dbg !893
+
+lpad7:                                            ; preds = %invoke.cont6
+  %12 = landingpad { i8*, i32 }
+          cleanup, !dbg !893
+  %13 = extractvalue { i8*, i32 } %12, 0, !dbg !893
+  store i8* %13, i8** %exn.slot, align 8, !dbg !893
+  %14 = extractvalue { i8*, i32 } %12, 1, !dbg !893
+  store i32 %14, i32* %ehselector.slot, align 4, !dbg !893
+  call void @_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev(%"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32) %agg.tmp3) #3, !dbg !892
+  br label %ehcleanup10, !dbg !892
+
+ehcleanup10:                                      ; preds = %lpad7, %lpad5
+  call void @_ZNSaIcED1Ev(%"class.std::allocator"* nonnull align 1 dereferenceable(1) %ref.tmp4) #3, !dbg !892
+  br label %eh.resume, !dbg !892
+
+if.end:                                           ; preds = %invoke.cont8, %invoke.cont2
+  ret i32 0, !dbg !894
+
+eh.resume:                                        ; preds = %ehcleanup10, %ehcleanup
+  %exn = load i8*, i8** %exn.slot, align 8, !dbg !886
+  %sel = load i32, i32* %ehselector.slot, align 4, !dbg !886
+  %lpad.val = insertvalue { i8*, i32 } undef, i8* %exn, 0, !dbg !886
+  %lpad.val11 = insertvalue { i8*, i32 } %lpad.val, i32 %sel, 1, !dbg !886
+  resume { i8*, i32 } %lpad.val11, !dbg !886
+}
+
+declare dso_local nonnull align 8 dereferenceable(16) %"class.std::basic_istream"* @_ZNSirsERi(%"class.std::basic_istream"* nonnull align 8 dereferenceable(16), i32* nonnull align 4 dereferenceable(4)) #1
+
+; Function Attrs: nounwind
+declare dso_local void @_ZNSaIcEC1Ev(%"class.std::allocator"* nonnull align 1 dereferenceable(1)) unnamed_addr #2
+
+declare dso_local void @_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1EPKcRKS3_(%"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32), i8*, %"class.std::allocator"* nonnull align 1 dereferenceable(1)) unnamed_addr #1
+
+declare dso_local i32 @__gxx_personality_v0(...)
+
+; Function Attrs: nounwind
+declare dso_local void @_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev(%"class.std::__cxx11::basic_string"* nonnull align 8 dereferenceable(32)) unnamed_addr #2
+
+; Function Attrs: nounwind
+declare dso_local void @_ZNSaIcED1Ev(%"class.std::allocator"* nonnull align 1 dereferenceable(1)) unnamed_addr #2
+
+; Function Attrs: noinline uwtable
+define internal void @_GLOBAL__sub_I_demo.cpp() #0 section ".text.startup" !dbg !895 {
+entry:
+  call void @__cxx_global_var_init(), !dbg !897
   ret void
 }
 
@@ -80,8 +209,9 @@ attributes #0 = { noinline uwtable "frame-pointer"="all" "min-legal-vector-width
 attributes #1 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #2 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #3 = { nounwind }
-attributes #4 = { mustprogress noinline norecurse optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #4 = { mustprogress noinline optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #5 = { nofree nosync nounwind readnone speculatable willreturn }
+attributes #6 = { mustprogress noinline norecurse optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.dbg.cu = !{!7}
 !llvm.module.flags = !{!847, !848, !849, !850, !851}
@@ -944,15 +1074,44 @@ attributes #5 = { nofree nosync nounwind readnone speculatable willreturn }
 !854 = !DILocation(line: 74, column: 25, scope: !855)
 !855 = !DILexicalBlockFile(scope: !853, file: !3, discriminator: 0)
 !856 = !DILocation(line: 0, scope: !853)
-!857 = distinct !DISubprogram(name: "main", scope: !8, file: !8, line: 4, type: !539, scopeLine: 4, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
-!858 = !DILocalVariable(name: "num", scope: !857, file: !8, line: 5, type: !20)
-!859 = !DILocation(line: 5, column: 9, scope: !857)
-!860 = !DILocation(line: 6, column: 14, scope: !857)
-!861 = !DILocation(line: 7, column: 18, scope: !857)
-!862 = !DILocation(line: 7, column: 22, scope: !857)
-!863 = !DILocation(line: 7, column: 15, scope: !857)
-!864 = !DILocation(line: 7, column: 27, scope: !857)
-!865 = !DILocation(line: 8, column: 5, scope: !857)
-!866 = distinct !DISubprogram(linkageName: "_GLOBAL__sub_I_demo.cpp", scope: !8, file: !8, type: !867, flags: DIFlagArtificial, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !7, retainedNodes: !9)
-!867 = !DISubroutineType(types: !9)
-!868 = !DILocation(line: 0, scope: !866)
+!857 = distinct !DISubprogram(name: "my_print", linkageName: "_Z8my_printNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi", scope: !8, file: !8, line: 8, type: !858, scopeLine: 9, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
+!858 = !DISubroutineType(types: !859)
+!859 = !{null, !860, !20}
+!860 = !DIDerivedType(tag: DW_TAG_typedef, name: "string", scope: !862, file: !861, line: 74, baseType: !863)
+!861 = !DIFile(filename: "/usr/lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/bits/stringfwd.h", directory: "")
+!862 = !DINamespace(name: "__cxx11", scope: !2, exportSymbols: true)
+!863 = !DICompositeType(tag: DW_TAG_class_type, name: "basic_string<char, std::char_traits<char>, std::allocator<char> >", scope: !862, file: !864, line: 1607, size: 256, flags: DIFlagFwdDecl | DIFlagNonTrivial, identifier: "_ZTSNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE")
+!864 = !DIFile(filename: "/usr/lib/gcc/x86_64-linux-gnu/7.5.0/../../../../include/c++/7.5.0/bits/basic_string.tcc", directory: "")
+!865 = !DILocalVariable(name: "info", arg: 1, scope: !857, file: !8, line: 8, type: !860)
+!866 = !DILocation(line: 8, column: 27, scope: !857)
+!867 = !DILocalVariable(name: "value", arg: 2, scope: !857, file: !8, line: 8, type: !20)
+!868 = !DILocation(line: 8, column: 37, scope: !857)
+!869 = !DILocation(line: 10, column: 15, scope: !857)
+!870 = !DILocation(line: 10, column: 23, scope: !857)
+!871 = !DILocation(line: 10, column: 33, scope: !857)
+!872 = !DILocation(line: 10, column: 30, scope: !857)
+!873 = !DILocation(line: 10, column: 39, scope: !857)
+!874 = !DILocation(line: 11, column: 1, scope: !857)
+!875 = distinct !DISubprogram(name: "main", scope: !8, file: !8, line: 13, type: !539, scopeLine: 14, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !7, retainedNodes: !9)
+!876 = !DILocalVariable(name: "num", scope: !875, file: !8, line: 15, type: !20)
+!877 = !DILocation(line: 15, column: 9, scope: !875)
+!878 = !DILocation(line: 16, column: 14, scope: !875)
+!879 = !DILocation(line: 18, column: 9, scope: !880)
+!880 = distinct !DILexicalBlock(scope: !875, file: !8, line: 18, column: 9)
+!881 = !DILocation(line: 18, column: 13, scope: !880)
+!882 = !DILocation(line: 18, column: 9, scope: !875)
+!883 = !DILocation(line: 21, column: 18, scope: !884)
+!884 = distinct !DILexicalBlock(scope: !880, file: !8, line: 19, column: 5)
+!885 = !DILocation(line: 21, column: 36, scope: !884)
+!886 = !DILocation(line: 21, column: 9, scope: !884)
+!887 = !DILocation(line: 22, column: 5, scope: !884)
+!888 = !DILocation(line: 28, column: 1, scope: !884)
+!889 = !DILocation(line: 25, column: 18, scope: !890)
+!890 = distinct !DILexicalBlock(scope: !880, file: !8, line: 24, column: 5)
+!891 = !DILocation(line: 25, column: 34, scope: !890)
+!892 = !DILocation(line: 25, column: 9, scope: !890)
+!893 = !DILocation(line: 28, column: 1, scope: !890)
+!894 = !DILocation(line: 27, column: 5, scope: !875)
+!895 = distinct !DISubprogram(linkageName: "_GLOBAL__sub_I_demo.cpp", scope: !8, file: !8, type: !896, flags: DIFlagArtificial, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !7, retainedNodes: !9)
+!896 = !DISubroutineType(types: !9)
+!897 = !DILocation(line: 0, scope: !895)

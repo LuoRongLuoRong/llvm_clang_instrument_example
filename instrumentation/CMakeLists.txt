@@ -2,8 +2,8 @@ add_definitions("-fPIC")
 
 add_library(InstrumentPass SHARED
     # List your source files here.
-    instrument.cpp
-    $<TARGET_OBJECTS:Rtlib>
+    # instrument.cpp
+    instrumentModulePass.cpp
 )
 
 # Use C++14 to compile our pass (i.e., supply -std=c++11).

@@ -22,8 +22,24 @@ public:
     /* core function */
     bool runImpl(Function &F);
 
-    void logValue();
+    StringRef getFunctionName(Function &F);
 };
+
+StringRef Skeleton::getFunctionName(Function &F) {
+    DISubprogram *DI = F.getSubprogram();
+    if (!DI)
+    {
+        errs() << "Function " << F.getName() << " does not have a subprogram\n";
+        return F.getName();
+    }
+    DIFile *DIF = DI->getFile();
+    if (!DIF)
+    {
+        errs() << "Function " << F.getName() << " does not have a file\n";
+    }
+    return F.getName();
+}
+
 /* core function */
 
 // 将 LLVM Pass 的 runOnFunction 解构到这个函数中，
@@ -33,6 +49,16 @@ bool Skeleton::runImpl(Function &F)
     // Get the function to call from our runtime library.
     LLVMContext &Ctx = F.getContext();
 
+    // function name in IR
+    // std::string MY_PRINT = "_Z8my_printNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi";
+    std::string MY_PRINT = "_Z8my_printi";
+
+    errs() << getFunctionName(F) << "\n";
+    // skip log function 
+    if (getFunctionName(F) == MY_PRINT) {
+        return false;
+    }
+    
     for (auto &B : F)
     {
         for (auto &I : B)
@@ -65,22 +91,26 @@ bool Skeleton::runImpl(Function &F)
                 Value *arg = op->getOperand(0); 
                 std::string var_name = arg->getName().str();
 
-                /* create a function in rtlib */
-                Value *args[] = {builder.CreateGlobalString(var_name), dyn_cast_or_null<Value>(op)};
-
-                // 函数参数：
-                std::vector<Type *> paramTypes = {
-                    Type::getInt8PtrTy(Ctx), // filename
-                    Type::getInt32Ty(Ctx),   // value
+                /* true args in print function */
+                // Value *args[] = {builder.CreateGlobalString(var_name), dyn_cast_or_null<Value>(op)};
+                Value *args[] = {
+                    dyn_cast_or_null<Value>(op)
                 };
-                // 函数返回值：
+
+                /* void my_print(int value)  */
+                std::vector<Type *> paramTypes = {
+                    // Type::getInt8PtrTy(Ctx),  // string
+                    Type::getInt32Ty(Ctx)  // int
+                };
                 Type *retType = Type::getVoidTy(Ctx);
-                // 函数类型：
                 FunctionType *logFuncType = FunctionType::get(retType, paramTypes, false);
-                // 根据函数的名字获取该函数：
-                FunctionCallee logFunc = F.getParent()->getOrInsertFunction("log_int", logFuncType);
+                FunctionCallee logFunc = F.getParent()->getOrInsertFunction(MY_PRINT, logFuncType);
+
+                // invoke void @_Z8my_printNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi(%"class.std::__cxx11::basic_string"* %agg.tmp, i32 %1)
 
                 builder.CreateCall(logFunc, args);
+                // builder.CreateInvoke(logFunc, B, B, args);
+                errs() << "   created call here\n";
             }
         }
     }

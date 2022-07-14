@@ -12,6 +12,5 @@ add_definitions("-fPIC")
 include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 
-add_subdirectory(rtlib)
 add_subdirectory(instrumentation)
 
