@@ -3,19 +3,19 @@
 <details>
   <summary>选择语言（Choose your language）</summary>
   <ul>
-    <li><a href="en/README.md">English</a></li>
-    <li><a href="zh/README.md">中文</a></li>
+    <li><a href="README_en.md">English</a></li>
+    <li><a href="README.md">中文</a></li>
   </ul>
 </details>
 
-本仓库是使用 LLVM 和 Clang 13 对 C++ 进行插装的一个简单示例，基于 LLVM Pass 实现。
+A simple example of instrumentation for C++ using LLVM and Clang 13.
+*LLVM Pass* is used to implement the instrumentation.
 
-## 简单描述
+## description
+Static binary instrumentation(SBI) belongs to dynamic analysis. We traverse the LLVM IR to instrument code and then **run the executable file**.
 
-静态二进制插桩（SBI）属于动态分析。我们遍历 LLVM IR 来插装代码，然后运行可执行文件。
-
-在这个项目中，我们用乘法代替加法，或者改变操作数的值。
-例如，`test/demo.cpp` 中的代码如下所示：
+In this project, we use multiplication in replace of addition.
+For example, the code in `test/demo.cpp` is as follows:
 
 ```c++
 int num;
@@ -23,16 +23,14 @@ std::cin >> num;
 std::cout << num + 10 << std::endl;
 ```
 
-如果我们输入一个数 a，那么它将输出 a + 10。
+If we input a number `a`, then it will output `a + 10`.
+But if we instrument code, then it will output different results.
 
-但是如果我们插装了代码，那么它将有不同的输出。
+## dependencies
 
-## 依赖
+Before we run the example, we have to make sure that `LLVM` and `Clang` and any other necessities are built correctly.
 
-
-在运行示例之前，我们必须确保 LLVM 和 Clang 以及其他必要的工具已正确安装。
-
-以下是我使用的工具及其对应的版本。
+The following are my tools and corresponding version.
 
 | tool | version | 
 | ------ | ------ | 
@@ -41,21 +39,23 @@ std::cout << num + 10 << std::endl;
 | Ubuntu | 18.04.1 |
 | gcc | 7.5.0 |
 
-## 运行！
+## RUN it!
 
-运行脚本 `run.sh`.
+Run the shell script `run.sh`.
 
 ```bash
 chmod +x ./run.sh
 ./run.sh
 ```
 
-我提供了两个示例：
-- 第一个是将所有 BinaryOperator 转变为乘法，
-- 第二个是 BinaryOperator 的第一个操作数变成常量 1。
-### BinaryOperator 转变为乘法
 
-在运行 run.sh 前需要在遍历 BinaryOperator 语句的时候调用 changeFromAddToMul 函数。
+I have provided two examples:
+
+- The first one is to transform all BinaryOperators into multiplication.
+- The second one is to change the first operand of a BinaryOperator into a constant 1.
+### Transform BinaryOperators into Multiplication
+
+Before running run.sh, you need to call the **changeFromAddToMul** function when iterating through BinaryOperator statements.
 
 ```c++
 if (auto *op = dyn_cast<BinaryOperator>(&I))
@@ -65,7 +65,7 @@ if (auto *op = dyn_cast<BinaryOperator>(&I))
 }
 ```
 
-如果成功的话，运行 run.sh 并输入 10 后，会得到如下结果：
+If successful, after running run.sh and inputting 10, you will get the following result:
 
 ```sh
 $ run.sh
@@ -95,12 +95,11 @@ num is 10
 100
 ```
 
-解释：`demo.cpp` 中的 `BinaryOperator` 有且仅有 `num + 10`。原本输入 `num = 10` 之后，得到的 `num + 10` 应该是 `20`，但是由于我们将该加法变成了乘法，所以结果是 `num * 10 = 100`。
+Explanation: The BinaryOperator in demo.cpp contains only num + 10. Originally, when num = 10 was inputted, num + 10 should have been equal to 20. However, since we transformed the addition into multiplication, the result becomes num * 10 = 100.
 
-### BinaryOperator 的第一个操作数变成常量 1
+### Change the first operand of a BinaryOperator into a constant.
 
-在运行 run.sh 前需要在遍历 BinaryOperator 语句的时候调用 ReplaceNum 函数。
-
+Before running run.sh, you need to call the **ReplaceNum** function when iterating through BinaryOperator statements.
 ```c++
 if (auto *op = dyn_cast<BinaryOperator>(&I))
 {
@@ -139,7 +138,8 @@ num is 1
 11
 ```
 
-解释：`demo.cpp` 中的 `BinaryOperator` 有且仅有 `num + 10`。原本输入 `num = 10` 之后，得到的 `num + 10` 应该是 `20`，但是由于我们将第一个操作数变成了 `1`，所以结果是 `num * 10 = 11`。
+Explanation: The BinaryOperator in demo.cpp contains only num + 10. Originally, when num = 10 was inputted, num + 10 should have been equal to 20. However, as we changed the first operand into 1, the result becomes num * 10 = 11.
+
 
 ## reference
 
