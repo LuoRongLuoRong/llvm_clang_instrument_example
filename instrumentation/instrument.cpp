@@ -23,8 +23,43 @@ public:
     bool runImpl(Function &F);
 
     void logValue();
+
+    void changeFromAddToMul(BinaryOperator *op);
+    void replaceNum(BinaryOperator *op, LLVMContext &Ctx);
 };
 /* core function */
+
+// 把 binaryOperation 全部变成乘法
+void Skeleton::changeFromAddToMul(BinaryOperator *op) {
+    IRBuilder<> builder(op);
+
+    // Make a multiply with the same operands as `op`.
+    Value *lhs = op->getOperand(0);
+    Value *rhs = op->getOperand(1);
+    Value *mul = builder.CreateMul(lhs, rhs);
+
+    // Everywhere the old instruction was used as an operand, use our
+    // new multiply instruction instead.
+    for (auto &U : op->uses())
+    {
+        User *user = U.getUser(); // A User is anything with operands.
+        // here we change from plus to multiply
+        user->setOperand(U.getOperandNo(), mul);
+    }
+}
+
+void Skeleton::replaceNum(BinaryOperator *op, LLVMContext &Ctx) {
+    // Insert at the point where the instruction `op` appears.
+    IRBuilder<> builder(op);
+
+    // Make a multiply with the same operands as `op`.
+    Value *lhs = op->getOperand(0);  // 假设已知 lhs 是我们要修改的变量
+    Value *rhs = op->getOperand(1);
+
+    Value *newLHS = ConstantInt::get(Type::getInt32Ty(Ctx), 1);  // 通过常量来创建新的值 1
+
+    lhs->replaceAllUsesWith(newLHS);
+}
 
 // 将 LLVM Pass 的 runOnFunction 解构到这个函数中，
 // 目的是减少成员变量的无效赋值，以提高项目效率。
@@ -39,22 +74,8 @@ bool Skeleton::runImpl(Function &F)
         {
             if (auto *op = dyn_cast<BinaryOperator>(&I))
             {
-                // Insert at the point where the instruction `op` appears.
-                IRBuilder<> builder(op);
-
-                // Make a multiply with the same operands as `op`.
-                Value *lhs = op->getOperand(0);
-                Value *rhs = op->getOperand(1);
-                Value *mul = builder.CreateMul(lhs, rhs);
-
-                // Everywhere the old instruction was used as an operand, use our
-                // new multiply instruction instead.
-                for (auto &U : op->uses())
-                {
-                    User *user = U.getUser(); // A User is anything with operands.
-                    // here we change from plus to multiply
-                    user->setOperand(U.getOperandNo(), mul);
-                }
+                changeFromAddToMul(op);
+                // replaceNum(op, Ctx);
             }
 
             if (auto *op = dyn_cast<LoadInst>(&I)) {
